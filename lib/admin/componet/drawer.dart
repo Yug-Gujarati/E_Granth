@@ -1,0 +1,61 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:flutter/material.dart';
+
+import 'list_tils.dart';
+
+
+class MyDrawer extends StatelessWidget {
+  final void Function()? onProfileTap;
+  final void Function()? onSignOut;
+  final void Function()? onHomeTap;
+  const MyDrawer({
+    super.key,
+    required this.onProfileTap,
+    required this.onSignOut,
+    required this.onHomeTap,
+    });
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color.fromARGB(255, 50, 57, 70),
+     child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              DrawerHeader(
+            child: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 64,
+            ),
+          ),
+
+          MyListTile(
+            icon: Icons.person, 
+            text: 'A D M I N', 
+            onTap: onProfileTap,
+          ),
+
+          MyListTile(
+            icon: Icons.home, 
+            text: 'H O M E', 
+            onTap: onHomeTap,
+          ),
+          ],
+          ),
+
+          Padding(
+            padding:  EdgeInsets.only(bottom: 25.0),
+            child: MyListTile(
+              icon: Icons.logout, 
+              text: 'L O G O U T', 
+              onTap: onSignOut,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "76774528849",
+    "project_id": "egranth-fac05",
+    "storage_bucket": "egranth-fac05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76774528849:android:582c99119d69dbe6e86570",
+        "android_client_info": {
+          "package_name": "com.example.egranth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76774528849-qrhckvamoh56u9q8d6ljjo2cb90c404g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYHpnU1cSQKebfkU0qSWoiDDwGUvxgPWE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76774528849-qrhckvamoh56u9q8d6ljjo2cb90c404g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
