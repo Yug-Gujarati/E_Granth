@@ -1,22 +1,27 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:egranth/admin/admin_page.dart';
+import 'package:egranth/pdf_viewer_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-import 'pdf_viewer_screen.dart';
+import 'admin/componet/drawer.dart';
+import 'admin/login_page.dart';
 
 class BookPage extends StatefulWidget {
-  const BookPage({Key? key}) : super(key: key);
+  const BookPage({super.key});
 
   @override
   State<BookPage> createState() => _BookPageState();
 }
 
 class _BookPageState extends State<BookPage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _FirebaseFirestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> pdfData = [];
-  List<Map<String, dynamic>> imageUrls = [];
-  List<Map<String, dynamic>> filteredPdfData = [];
-  List<Map<String, dynamic>> filteredimgData = [];
+  List<String> imageUrls = [];
   final TextEditingController _searchController = TextEditingController();
+
+  List<Map<String, dynamic>> filteredPdfData = [];
+  List<String> filteredImageUrls = [];
 
   @override
   void initState() {
@@ -25,36 +30,62 @@ class _BookPageState extends State<BookPage> {
     getImages();
   }
 
-  Future<void> getImages() async {
-    final snapshot =
-        await _firestore.collection("files").orderBy('timestamp', descending: true).get();
-    imageUrls = snapshot.docs.map((e) => e.data() as Map<String, dynamic>).toList();
+  void getAppPdf() async {
+    final results =  await _FirebaseFirestore.collection("pdfs").orderBy('timestamp', descending: true).get();
+    pdfData = results.docs.map((e) => e.data()).toList();
+    filteredPdfData = List.from(pdfData);
     setState(() {});
   }
 
-  Future<void> getAppPdf() async {
-    final results =
-        await _firestore.collection("pdfs").orderBy('timestamp', descending: true).get();
-    pdfData = results.docs.map((e) => e.data() as Map<String, dynamic>).toList();
+  void getImages() async {
+    final snapshot =  await _FirebaseFirestore.collection("files").orderBy('timestamp', descending: true).get();
+    imageUrls = snapshot.docs.map((doc) => doc['url'] as String).toList();
+    filteredImageUrls = List.from(imageUrls);
     setState(() {});
   }
 
-  void filterPdfData(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        filteredPdfData = pdfData;
-        filteredimgData = imageUrls;
-      } else {
-        filteredPdfData = pdfData
-            .where((pdf) => pdf['name'].toLowerCase().contains(query.toLowerCase()))
-            .toList();
-        filteredimgData = imageUrls.where((imag) {
-          int index =
-              pdfData.indexWhere((pdf) => pdf['name'].toLowerCase().contains(query.toLowerCase()));
-          return index >= 0 && index < imageUrls.length;
-        }).toList();
+  void searchBooks(String query) {
+  setState(() {
+    filteredPdfData = [];
+    filteredImageUrls = [];
+
+    for (var book in pdfData) {
+      if (book['name'].toLowerCase().contains(query.toLowerCase())) {
+        filteredPdfData.add(book);
+        final index = pdfData.indexOf(book);
+        if (index >= 0 && index < imageUrls.length) {
+          filteredImageUrls.add(imageUrls[index]);
+        }
       }
-    });
+    }
+  });
+}
+
+
+
+
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    Navigator.pop(context);
+  }
+
+  void goToProfilePage() {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AdminPage(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -65,6 +96,13 @@ class _BookPageState extends State<BookPage> {
         centerTitle: true,
         backgroundColor: Colors.orange[300],
       ),
+      drawer: MyDrawer(
+        onProfileTap: goToProfilePage,
+        onSignOut: signOut,
+        onHomeTap: () {
+          Navigator.pop(context);
+        },
+      ),
       backgroundColor: Colors.grey[100],
       body: Column(
         children: [
@@ -72,55 +110,62 @@ class _BookPageState extends State<BookPage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
-              onChanged: filterPdfData,
-              decoration: const InputDecoration(
-                labelText: 'Search Books',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+              onChanged: searchBooks,
+              decoration: InputDecoration(
+                hintText: 'Search books...',
               ),
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredPdfData.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: InkWell(
-                    onTap: () {
-                      // Navigate to the PDF viewer screen passing the URL
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PdfViewerPage(
-                            pdfUrl: filteredPdfData[index]['url'],
+            child: Container(
+              padding: const EdgeInsets.all(10.0),
+              child: GridView.builder(
+                itemCount: filteredPdfData.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.6,
+                ),
+                itemBuilder: (context, index) {
+                  if (index >= filteredPdfData.length || index >= filteredImageUrls.length) {
+                    return Container(); // Handle cases where the index is out of range due to empty lists.
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => PdfViewerPage(
+                              pdfUrl: filteredPdfData[index]['url'],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          height: 250,
-                          width: 220,
-                          child: Image.network(
-                            filteredimgData[index]['url'],
-                            fit: BoxFit.cover,
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 200,
+                            width: 150,
+                            child: Image.network(
+                              filteredImageUrls[index],
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text(
-                          filteredPdfData[index]['name'],
-                          style: const TextStyle(
-                            fontSize: 12,
+                          SizedBox(height: 0.1),
+                          Text(
+                            filteredPdfData[index]['name'],
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],

@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       // Navigate to the home page after 2 seconds
       Navigator.pushReplacementNamed(context, '/BookPage');
     });
