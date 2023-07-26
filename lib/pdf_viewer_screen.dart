@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class PdfViewerPage extends StatefulWidget {
   final String pdfUrl;
 
-  const PdfViewerPage({super.key , required this.pdfUrl});
+   PdfViewerPage({super.key , required this.pdfUrl});
 
   @override
   State<PdfViewerPage> createState() => _PdfViewerPageState();
