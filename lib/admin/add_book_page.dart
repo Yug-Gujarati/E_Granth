@@ -21,47 +21,35 @@ class _AddBookPageState extends State<AddBookPage> {
   final FirebaseFirestore _FirebaseFirestore = FirebaseFirestore.instance;
   PlatformFile? pickedFiles;
   UploadTask? uploadTask;
-  double _imageUploadProgress = 0.0;
-  double _pdfUploadProgress = 0.0;
 
-
- void _showProgressBarDialog(String message, double progress) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LinearPercentIndicator(
-            width: 200.0,
-            lineHeight: 15.0,
-            animation: true,
-            animationDuration: 1000,
-            percent: progress, // Use the progress parameter to update the percentage value.
-            center: Text(message),
-            linearStrokeCap: LinearStrokeCap.roundAll,
-            progressColor: Colors.blue,
+ void _showProgressBarDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearPercentIndicator(
+              width: 200.0,
+              lineHeight: 15.0,
+              animation: true,
+              animationDuration: 1000,
+              percent: 0.0, // Start at 0%.
+              center: Text(message),
+              // ignore: deprecated_member_use
+              linearStrokeCap: LinearStrokeCap.roundAll,
+              progressColor: Colors.blue,
             ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-
-  void _updateProgress(double progress, String type) {
-  setState(() {
-    // Update the corresponding variable based on the type parameter
-    if (type == 'image') {
-      _imageUploadProgress = progress;
-    } else if (type == 'pdf') {
-      _pdfUploadProgress = progress;
-    }
-  });
-}
-
+  void _updateProgress(double progress) {
+    Navigator.pop(context); // Pop the previous dialog to update the percentage value.
+    _showProgressBarDialog('${(progress * 100).toStringAsFixed(2)}% Uploaded');
+  }
 
 
   Future selectImage() async {
@@ -71,15 +59,16 @@ class _AddBookPageState extends State<AddBookPage> {
       String fileName = result.files[0].name;
       File file = File(result.files[0].path!);
 
-     _showProgressBarDialog('Uploading Image...', _imageUploadProgress);
+     _showProgressBarDialog('Uploading Image...', );
 
       final downloadLink = await uploadImage(fileName, file);
 
       await _FirebaseFirestore.collection('files').add({
         'name': fileName,
         'url': downloadLink,
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': DateTime.now(),
       });
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
       // ignore: avoid_print
      _showUploadSuccessSnackBar();
@@ -92,11 +81,11 @@ class _AddBookPageState extends State<AddBookPage> {
     
     uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
       double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-       _updateProgress(progress, 'image');
+       _updateProgress(progress);
     });
     await uploadTask.whenComplete(() {
     // Pass the 'image' type to the _updateProgress() method
-    _updateProgress(1.0, 'image');
+    _updateProgress(1.0);
   });
     final downloadLink = await ref.getDownloadURL();
 
@@ -111,15 +100,16 @@ class _AddBookPageState extends State<AddBookPage> {
       String fileName = pickedFile.files[0].name;
       File file = File(pickedFile.files[0].path!);
 
-      _showProgressBarDialog('Uploading PDF...', _pdfUploadProgress);
+      _showProgressBarDialog('Uploading PDF...',);
 
       final downloadLink = await uploadpdf(fileName, file);
 
       await _FirebaseFirestore.collection('pdfs').add({
         'name': fileName,
         'url': downloadLink,
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': DateTime.now(),
       });
+       // ignore: use_build_context_synchronously
        Navigator.pop(context);
      _showUploadSuccessSnackBar();
     }
@@ -131,11 +121,11 @@ class _AddBookPageState extends State<AddBookPage> {
   final uploadTask = ref.putFile(file);
   uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
       double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-      _updateProgress(progress, 'pdf');
+      _updateProgress(progress,);
     });
   await uploadTask.whenComplete(() {
     // Pass the 'pdf' type to the _updateProgress() method
-    _updateProgress(1.0, 'pdf');
+    _updateProgress(1.0,);
   });
   final downloadLink = await ref.getDownloadURL();
 
@@ -144,7 +134,7 @@ class _AddBookPageState extends State<AddBookPage> {
 
 
 void _showUploadSuccessSnackBar() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully Uploaded'),
       backgroundColor: Colors.green,
     ));
@@ -159,7 +149,7 @@ void signOut() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookPage(),
+        builder: (context) => const BookPage(),
         ),
       );
   }
@@ -169,7 +159,7 @@ void signOut() {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => BookPage(),
+      builder: (context) => const BookPage(),
           ),
       );
     }
@@ -181,7 +171,7 @@ void signOut() {
   Widget build(BuildContext context) {
   return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Book Hear'),
+        title: const Text('Add Book'),
         centerTitle: true,
         backgroundColor: Colors.orange[300],
       ),
@@ -191,7 +181,7 @@ void signOut() {
         Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AdminPage(),
+          builder: (context) => const AdminPage(),
               ),
           );
         },
@@ -209,7 +199,7 @@ void signOut() {
                 width: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.blue[400],
+                  color: Colors.blueAccent,
                 ),
                 child: InkWell(
                   onTap: selectImage,
@@ -232,7 +222,7 @@ void signOut() {
                 width: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.blue[400],
+                  color: Colors.blueAccent,
                 ),
                 child: InkWell(
                   onTap: pickFiles,
@@ -249,11 +239,6 @@ void signOut() {
                 ),
               ),
 
-              // SizedBox(height: 20),
-              // ElevatedButton(
-              //   onPressed: pickFiles,
-              //   child: const Text('Select a Pdf'),
-              //   ),
           ],
         ),
       ),

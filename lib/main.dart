@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomePage(),
       routes: {
-        '/BookPage': (context) =>  BookPage(),
+        '/BookPage': (context) =>  const BookPage(),
       },
     );
   }

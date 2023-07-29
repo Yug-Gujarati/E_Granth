@@ -1,14 +1,9 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:egranth/admin/add_book_page.dart';
 import 'package:egranth/admin/delete_book_page.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../books_page.dart';
 import 'componet/drawer.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -18,120 +13,13 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  // ignore: non_constant_identifier_names
-  final FirebaseFirestore _FirebaseFirestore = FirebaseFirestore.instance;
-  PlatformFile? pickedFiles;
-  UploadTask? uploadTask;
-
-
-  void _showProgressBarDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LinearPercentIndicator(
-              width: 200.0,
-              lineHeight: 15.0,
-              animation: true,
-              animationDuration: 1000,
-              percent: 0.0, // Start at 0%.
-              center: Text(message),
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              progressColor: Colors.blue,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-
-  void _updateProgress(double progress) {
-    Navigator.pop(context); // Pop the previous dialog to update the percentage value.
-    _showProgressBarDialog('${(progress * 100).toStringAsFixed(2)}% Uploaded');
-  }
-
-
-  Future selectBook() async {
-    final result = await FilePicker.platform.pickFiles();
-
-    if(result != null){
-      String fileName = result.files[0].name;
-      File file = File(result.files[0].path!);
-
-      _showProgressBarDialog('Uploading Image...');
-       Navigator.pop(context);
-
-      final downloadLink = await uploadBook(fileName, file);
-
-      await _FirebaseFirestore.collection('files').add({
-        'name': fileName,
-        'url': downloadLink,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      // ignore: avoid_print
-      print("Image Successfully Uploaded");
-    }
-  }
-
-  Future<String> uploadBook(String fileName , File file) async {
-    final ref = FirebaseStorage.instance.ref().child("files/$fileName");
-    final uploadTask = ref.putFile(file);
-    await uploadTask.whenComplete(() {});
-    final downloadLink = await ref.getDownloadURL();
-
-    return downloadLink;
-}
-//...............................................................................................................................
-
-  void pickFiles() async {
-    final pickedFile = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
-
-    if(pickedFile != null){
-      String fileName = pickedFile.files[0].name;
-      File file = File(pickedFile.files[0].path!);
-
-      _showProgressBarDialog('Uploading PDF...');
-
-      final downloadLink = await uploadpdf(fileName, file);
-
-      await _FirebaseFirestore.collection('pdfs').add({
-        'name': fileName,
-        'url': downloadLink,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      Navigator.pop(context);
-      // ignore: avoid_print
-      print("Pdf Successfully Uploaded");
-    }
-  }
-
-
-  Future<String> uploadpdf(String fileName , File file) async {
-  final ref = FirebaseStorage.instance.ref().child("pdfs/$fileName");
-  final uploadTask = ref.putFile(file);
-  await uploadTask.whenComplete(() {});
-  final downloadLink = await ref.getDownloadURL();
-
-  return downloadLink;
-}
-//...............................................................................................................................
-
-
 void signOut() {
     FirebaseAuth.instance.signOut(); 
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookPage(),
+        builder: (context) => const BookPage(),
         ),
       );
   }
@@ -141,7 +29,7 @@ void signOut() {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => BookPage(),
+      builder: (context) => const BookPage(),
           ),
       );
     }
@@ -172,14 +60,14 @@ void signOut() {
                 width: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.blue[400],
+                  color: Colors.blueAccent,
                 ),
                 child: InkWell(
                   onTap: (){
                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddBookPage(),
+                      builder: (context) => const AddBookPage(),
                           ),
                       );
                   },
@@ -196,26 +84,20 @@ void signOut() {
                 ),
               ),
 
-              // SizedBox(height: 20),
-              // ElevatedButton(
-              //   onPressed: pickFiles,
-              //   child: const Text('Select a Pdf'),
-              //   ),
-
               const SizedBox(height: 20),
               Container(
                 height: 100,
                 width: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.blue[400],
+                  color: Colors.blueAccent,
                 ),
                 child: InkWell(
                   onTap: (){
                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DeleteBookPage(),
+                      builder: (context) => const DeleteBookPage(),
                           ),
                       );
                   },
@@ -230,8 +112,7 @@ void signOut() {
                       ) 
                     ),
                 ),
-              ),
-              
+              ), 
           ],
         ),
       ),

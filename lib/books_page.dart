@@ -15,6 +15,7 @@ class BookPage extends StatefulWidget {
 }
 
 class _BookPageState extends State<BookPage> {
+  // ignore: non_constant_identifier_names
   final FirebaseFirestore _FirebaseFirestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> pdfData = [];
   List<String> imageUrls = [];
@@ -92,7 +93,7 @@ class _BookPageState extends State<BookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Granthsagar'),
+        title: const Text('GranthSagar'),
         centerTitle: true,
         backgroundColor: Colors.orange[300],
       ),
@@ -103,7 +104,7 @@ class _BookPageState extends State<BookPage> {
           Navigator.pop(context);
         },
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       body: Column(
         children: [
           Padding(
@@ -111,7 +112,7 @@ class _BookPageState extends State<BookPage> {
             child: TextField(
               controller: _searchController,
               onChanged: searchBooks,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Search books...',
               ),
             ),
@@ -144,6 +145,7 @@ class _BookPageState extends State<BookPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          // ignore: sized_box_for_whitespace
                           Container(
                             height: 200,
                             width: 150,
@@ -152,13 +154,16 @@ class _BookPageState extends State<BookPage> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(height: 0.1),
-                          Text(
-                            filteredPdfData[index]['name'],
-                            style: const TextStyle(
-                              fontSize: 12,
+                          const SizedBox(height: 0.1),
+                          Expanded(
+                            child: Text(
+                              filteredPdfData[index]['name'],
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey[900],
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),

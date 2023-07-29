@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 31, 36, 45),
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Padding(
           padding:  EdgeInsets.symmetric(horizontal : 25.0),
@@ -69,11 +69,11 @@ class _LoginPageState extends State<LoginPage> {
               Icon(
                 Icons.lock,
                 size: 100,
-                color: Colors.white,
+                color: Colors.grey[900],
               ),
         
               Text("Only for Admin login",
-              style: TextStyle(color: Colors.grey[100] , fontSize: 16),
+              style: TextStyle(color: Colors.grey[850] , fontSize: 16),
               
               ),
         
@@ -106,15 +106,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-//   void _login() async {
-//     try {
-//       await _auth.signInWithEmailAndPassword(email: _email, password: _password);
-//       Navigator.of(context).pushReplacement(
-//           MaterialPageRoute(
-//               builder: (context) => AdminPage()));
-//     } catch (e) {
-//       print(e);
-//     }
-//   }
-// }
