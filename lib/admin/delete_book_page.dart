@@ -4,7 +4,7 @@ import 'package:egranth/books_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'componet/drawer.dart';
 
 
@@ -194,10 +194,12 @@ void signOut() {
                           Container(
                             height: 200,
                             width: 150,
-                            child: Image.network(
-                              filteredImageUrls[index],
-                              fit: BoxFit.cover,
-                            ),
+                            child: CachedNetworkImage(
+                                imageUrl: filteredImageUrls[index],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const CircularProgressIndicator(), // Placeholder widget while the image is loading.
+                                errorWidget: (context, url, error) => const Icon(Icons.error), // Widget to display when an error occurs during loading.
+                              ),
                           ),
                           const SizedBox(height: 0.1),
                           Expanded(

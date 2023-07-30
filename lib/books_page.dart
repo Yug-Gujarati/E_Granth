@@ -3,7 +3,7 @@ import 'package:egranth/admin/admin_page.dart';
 import 'package:egranth/pdf_viewer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'admin/componet/drawer.dart';
 import 'admin/login_page.dart';
 
@@ -149,10 +149,12 @@ class _BookPageState extends State<BookPage> {
                           Container(
                             height: 200,
                             width: 150,
-                            child: Image.network(
-                              filteredImageUrls[index],
-                              fit: BoxFit.cover,
-                            ),
+                            child: CachedNetworkImage(
+                                imageUrl: filteredImageUrls[index],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const CircularProgressIndicator(), // Placeholder widget while the image is loading.
+                                errorWidget: (context, url, error) => const Icon(Icons.error), // Widget to display when an error occurs during loading.
+                              ),
                           ),
                           const SizedBox(height: 0.1),
                           Expanded(
