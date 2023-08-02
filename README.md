@@ -1,17 +1,6 @@
 # egranth
 
-A new Flutter project.
 
-## Getting Started
+https://github.com/Yug-Gujarati/E_Granth/assets/89289757/22b7cd26-6208-4b68-861d-1c93d24304a2
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# E_Granth" 
+Welcome to my Book app, built with Flutter! With our app, you can access a vast collection of books from different genres. From classic literature to contemporary, My app has it all. I have designed the app with a user-friendly interface, making it easy to navigate through the library and find your next read. You can also customize your reading experience with features like font size, line spacing, and dark mode. So, what are you waiting for? Download our Book app today and start exploring the world of literature at your fingertips!
